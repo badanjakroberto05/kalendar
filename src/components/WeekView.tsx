@@ -86,7 +86,7 @@ export default function WeekView({ anchor, setAnchor, lessons, studentsById, onO
                   <div className={cx("text-xs font-bold uppercase tracking-wider", isToday ? "text-brand" : "text-muted")}>{fmt(d, "EEE")}</div>
                   <div className={cx("text-xl font-bold", past && "text-muted")}>{fmt(d, "d.")}</div>
                 </div>
-                <IconButton label="Dodaj termin" onClick={() => onAdd(iso)} className="size-8 opacity-0 transition group-hover:opacity-100 focus:opacity-100"><Plus className="size-4" /></IconButton>
+                <IconButton label="Dodaj termin" onClick={() => onAdd(iso)} className="size-8 bg-white text-ink shadow-sm hover:bg-brand-soft hover:text-brand-deep"><Plus className="size-4" /></IconButton>
               </div>
               <div className="grid min-w-0 content-start gap-2">
                 {items.map((l) => <LessonCard key={l.id} lesson={l} student={l.student_id ? studentsById.get(l.student_id) : undefined} onClick={() => onOpen(l)} compact past={isPast(l)} onDone={() => onDone([l.id])} />)}
