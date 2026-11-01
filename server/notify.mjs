@@ -31,6 +31,9 @@ function transporter() {
     port,
     secure: port === 465,
     auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    connectionTimeout: 15_000,
+    greetingTimeout: 15_000,
+    socketTimeout: 30_000,
   });
 }
 
@@ -158,8 +161,11 @@ export async function sendWeeklySummary({ force = false } = {}) {
         });
         result.email = { ok: true, to: settings.notify_email };
       } catch (e) {
-        console.warn("[email] greška", e.message);
-        result.email = { ok: false, error: e.message };
+        console.warn("[email] greška", e.code || "", e.message);
+        const hint = /ETIMEDOUT|ECONNECTION|timeout/i.test(String(e.code) + e.message)
+          ? " – server ne može doći do SMTP-a (provjeri SMTP_PORT=587; Hetzner često blokira 465)"
+          : /auth|535|Username and Password/i.test(e.message) ? " – kriva Gmail app lozinka" : "";
+        result.email = { ok: false, error: e.message + hint };
       }
     }
   }

@@ -33,7 +33,7 @@ export default function Shell({ view, setView, onAdd, children }: { view: View; 
       {/* Content */}
       <main className="min-w-0 flex-1">
         <div className="pt-safe" />
-        <div className="mx-auto w-full max-w-6xl px-4 pb-32 pt-4 sm:px-6 lg:px-8 lg:pb-12 lg:pt-8">{children}</div>
+        <div className="mx-auto w-full max-w-7xl px-4 pb-32 pt-4 sm:px-6 lg:px-8 lg:pb-12 lg:pt-8">{children}</div>
       </main>
 
       {/* Mobile bottom nav + FAB */}

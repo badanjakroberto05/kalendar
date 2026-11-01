@@ -80,7 +80,7 @@ export default function WeekView({ anchor, setAnchor, lessons, studentsById, onO
         {days.map((d) => {
           const iso = toISO(d), items = byDay.get(iso) || [], isToday = isSameDay(d, now), past = d < now && !isToday;
           return (
-            <section key={iso} className={cx("group flex min-h-[360px] flex-col rounded-[22px] p-2.5 transition", isToday ? "bg-brand-soft/70 ring-1 ring-brand/20" : "bg-white/60")}>
+            <section key={iso} className={cx("group flex min-h-[360px] min-w-0 flex-col rounded-[22px] p-2.5 transition", isToday ? "bg-brand-soft/70 ring-1 ring-brand/20" : "bg-white/60")}>
               <div className="mb-2 flex items-center justify-between px-1">
                 <div>
                   <div className={cx("text-xs font-bold uppercase tracking-wider", isToday ? "text-brand" : "text-muted")}>{fmt(d, "EEE")}</div>
@@ -88,7 +88,7 @@ export default function WeekView({ anchor, setAnchor, lessons, studentsById, onO
                 </div>
                 <IconButton label="Dodaj termin" onClick={() => onAdd(iso)} className="size-8 opacity-0 transition group-hover:opacity-100 focus:opacity-100"><Plus className="size-4" /></IconButton>
               </div>
-              <div className="grid content-start gap-2">
+              <div className="grid min-w-0 content-start gap-2">
                 {items.map((l) => <LessonCard key={l.id} lesson={l} student={l.student_id ? studentsById.get(l.student_id) : undefined} onClick={() => onOpen(l)} compact past={isPast(l)} onDone={() => onDone([l.id])} />)}
               </div>
               {!items.length ? <button onClick={() => onAdd(iso)} className="mt-1 flex flex-1 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 text-sm text-slate-400 transition hover:border-brand/40 hover:text-brand"><CalendarX2 className="mb-1 size-4" />Slobodno</button> : null}

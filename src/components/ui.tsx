@@ -124,7 +124,7 @@ export function Sheet({ open, onClose, title, children, footer, wide }: { open: 
           <IconButton label="Zatvori" onClick={onClose} className="-mr-2"><X className="size-5" /></IconButton>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-5 sm:px-7">{children}</div>
-        {footer ? <div className="pb-safe border-t border-line bg-white px-5 py-4 sm:px-7">{footer}</div> : <div className="pb-safe" />}
+        {footer ? <div className="border-t border-line bg-white px-5 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-7 sm:pb-5">{footer}</div> : <div className="pb-safe" />}
       </div>
     </div>
   );
