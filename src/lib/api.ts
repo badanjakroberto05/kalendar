@@ -77,6 +77,7 @@ export const api = {
     range: (from: string, to: string) => req<Lesson[]>("GET", `/api/lessons?from=${from}&to=${to}`),
     create: (input: Partial<Lesson> & { repeat_weeks?: number }) => req<Lesson[]>("POST", "/api/lessons", input),
     update: (id: string, patch: Partial<Lesson> & { scope?: "one" | "future" }) => req<Lesson>("PUT", `/api/lessons/${id}`, patch),
+    bulkStatus: (ids: string[], status: LessonStatus) => req<{ ok: true; updated: number }>("POST", "/api/lessons/status", { ids, status }),
     remove: (id: string, scope: "one" | "future" = "one") => req<{ ok: true }>("DELETE", `/api/lessons/${id}?scope=${scope}`),
   },
   students: {

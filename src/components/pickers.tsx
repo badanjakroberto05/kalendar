@@ -32,7 +32,7 @@ export function DateField({ value, onChange }: { value: string; onChange: (v: st
   const today = new Date();
   const first = startOfMonth(view), last = endOfMonth(view), gridStart = weekStart(first);
   const cells = Array.from({ length: 42 }, (_, i) => addDays(gridStart, i)).filter((d, i) => i < 35 || d <= last);
-  const raw = fmt(selected, "EEEE, d. MMMM yyyy.");
+  const raw = fmt(selected, selected.getFullYear() === new Date().getFullYear() ? "EEEE, d. MMMM" : "EEEE, d. MMMM yyyy.");
   const label = raw.charAt(0).toUpperCase() + raw.slice(1);
   return (
     <div>

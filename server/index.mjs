@@ -171,6 +171,14 @@ api.put("/lessons/:id", (req, res) => {
   res.json(updated);
 });
 
+api.post("/lessons/status", (req, res) => {
+  const { ids, status } = req.body || {};
+  if (!Array.isArray(ids) || !["scheduled", "done", "cancelled"].includes(status)) return res.status(400).json({ error: "Neispravan zahtjev." });
+  let n = 0;
+  for (const id of ids.slice(0, 200)) if (lessons.update(String(id), { status })) n++;
+  res.json({ ok: true, updated: n });
+});
+
 api.delete("/lessons/:id", (req, res) => {
   const cur = lessons.get(req.params.id);
   if (!cur) return res.json({ ok: true });

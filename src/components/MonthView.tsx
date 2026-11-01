@@ -6,9 +6,9 @@ import { colorOf } from "../lib/colors";
 import LessonCard from "./LessonCard";
 import { Button, Empty, IconButton, cx } from "./ui";
 
-export default function MonthView({ anchor, setAnchor, lessons, studentsById, onOpen, onAdd }: {
+export default function MonthView({ anchor, setAnchor, lessons, studentsById, onOpen, onAdd, onDone }: {
   anchor: Date; setAnchor: (d: Date) => void; lessons: Lesson[]; studentsById: Map<string, Student>;
-  onOpen: (l: Lesson) => void; onAdd: (date: string) => void;
+  onOpen: (l: Lesson) => void; onAdd: (date: string) => void; onDone: (ids: string[]) => void;
 }) {
   const [selected, setSelected] = useState<string>(toISO(new Date()));
   const now = new Date();
@@ -70,7 +70,7 @@ export default function MonthView({ anchor, setAnchor, lessons, studentsById, on
           <Button variant="soft" size="sm" onClick={() => onAdd(selected)}><Plus className="size-4" />Dodaj</Button>
         </div>
         {selItems.length ? (
-          <div className="grid gap-2">{selItems.map((l) => <LessonCard key={l.id} lesson={l} student={l.student_id ? studentsById.get(l.student_id) : undefined} onClick={() => onOpen(l)} />)}</div>
+          <div className="grid gap-2">{selItems.map((l) => <LessonCard key={l.id} lesson={l} student={l.student_id ? studentsById.get(l.student_id) : undefined} onClick={() => onOpen(l)} past={selected < toISO(now)} onDone={() => onDone([l.id])} />)}</div>
         ) : (
           <div className="rounded-[22px] bg-white/60"><Empty icon={<CalendarDays className="size-6" />} title="Slobodan dan" text="Dodirni „Dodaj“ za novi termin na ovaj dan." /></div>
         )}

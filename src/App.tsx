@@ -4,8 +4,7 @@ import { addDays, endOfMonth, startOfMonth, toISO, weekStart, fromISO } from "./
 import { ToastProvider, useToast } from "./components/ui";
 import Login from "./components/Login";
 import Shell, { type View } from "./components/Shell";
-import WeekView from "./components/WeekView";
-import MonthView from "./components/MonthView";
+import TerminiView, { type Mode } from "./components/TerminiView";
 import StudentsView from "./components/StudentsView";
 import SettingsView from "./components/SettingsView";
 import ReportView from "./components/ReportView";
@@ -31,7 +30,8 @@ type SheetState = { kind: "create"; date?: string } | { kind: "edit"; lesson: Le
 function Main({ me, refreshMe, onLogout }: { me: Me; refreshMe: () => Promise<void>; onLogout: () => void }) {
   const toast = useToast();
   const params = new URLSearchParams(location.search);
-  const [view, setView] = useState<View>("week");
+  const [view, setView] = useState<View>("termini");
+  const initialMode: Mode | undefined = params.get("week") ? "week" : params.get("date") ? "week" : undefined;
   const [anchor, setAnchor] = useState<Date>(() => { const p = params.get("week") || params.get("date"); return p ? fromISO(p) : new Date(); });
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
@@ -72,12 +72,16 @@ function Main({ me, refreshMe, onLogout }: { me: Me; refreshMe: () => Promise<vo
     } catch { /* toast već prikazan */ }
   }
 
+  function markDone(ids: string[]) {
+    run(() => api.lessons.bulkStatus(ids, "done"), ids.length === 1 ? "Označeno kao održano." : `${ids.length} termina označeno kao održano.`).catch(() => {});
+  }
+
   const detail = sheet?.kind === "detail" ? lessons.find((l) => l.id === sheet.lesson.id) || sheet.lesson : null;
 
   return (
-    <Shell view={view} setView={setView} onAdd={() => setSheet({ kind: "create", date: view === "week" ? toISO(anchor >= new Date() ? anchor : new Date()) : undefined })}>
-      {view === "week" ? <WeekView anchor={anchor} setAnchor={setAnchor} lessons={lessons} studentsById={studentsById} onOpen={(l) => setSheet({ kind: "detail", lesson: l })} onAdd={(d) => setSheet({ kind: "create", date: d })} /> : null}
-      {view === "month" ? <MonthView anchor={anchor} setAnchor={setAnchor} lessons={lessons} studentsById={studentsById} onOpen={(l) => setSheet({ kind: "detail", lesson: l })} onAdd={(d) => setSheet({ kind: "create", date: d })} /> : null}
+    <Shell view={view} setView={setView} onAdd={() => setSheet({ kind: "create", date: view === "termini" ? toISO(anchor >= new Date() ? anchor : new Date()) : undefined })}>
+      {view === "termini" ? <TerminiView anchor={anchor} setAnchor={setAnchor} lessons={lessons} studentsById={studentsById} tick={tick} initialMode={initialMode}
+        onOpen={(l) => setSheet({ kind: "detail", lesson: l })} onAdd={(d) => setSheet({ kind: "create", date: d })} onDone={markDone} /> : null}
       {view === "students" ? <StudentsView students={students} busy={busy}
         onSave={async (s, id) => { await run(() => (id ? api.students.update(id, s) : api.students.create(s)), "Spremljeno."); }}
         onDelete={async (id) => { await run(() => api.students.remove(id), "Učenik je obrisan."); }} /> : null}
