@@ -42,6 +42,12 @@ create table if not exists lessons (
 );
 create index if not exists lessons_date_idx on lessons(date, start_time);
 create index if not exists lessons_series_idx on lessons(series_id);
+create table if not exists invoiced (
+  student_key text not null,
+  month text not null,
+  created_at text not null default (datetime('now')),
+  primary key (student_key, month)
+);
 create table if not exists push_subscriptions (
   id text primary key,
   endpoint text not null unique,
@@ -161,4 +167,41 @@ export const pushSubs = {
   },
   remove: (endpoint) => db.prepare("delete from push_subscriptions where endpoint = ?").run(endpoint),
   count: () => db.prepare("select count(*) as n from push_subscriptions").get().n,
+};
+
+// ---- obračun ----
+export const report = {
+  month: (month) => {
+    const rows = db.prepare(
+      "select l.*, s.color, s.phone from lessons l left join students s on s.id = l.student_id where substr(l.date,1,7) = ? and l.status != 'cancelled' order by l.date, l.start_time"
+    ).all(month);
+    const invoiced = new Set(db.prepare("select student_key from invoiced where month = ?").all(month).map((r) => r.student_key));
+    const groups = new Map();
+    for (const l of rows) {
+      const key = l.student_id || "name:" + l.student_name.toLowerCase();
+      if (!groups.has(key)) groups.set(key, { key, student_id: l.student_id, student_name: l.student_name, color: l.color || "indigo", phone: l.phone, done: [], scheduled: 0, minutes: 0, amount: 0, invoiced: invoiced.has(key) });
+      const g = groups.get(key);
+      if (l.status === "done") {
+        const [sh, sm] = l.start_time.split(":").map(Number), [eh, em] = l.end_time.split(":").map(Number);
+        const mins = eh * 60 + em - (sh * 60 + sm);
+        g.minutes += mins; g.amount += Number(l.price) || 0;
+        g.done.push({ id: l.id, date: l.date, start_time: l.start_time, end_time: l.end_time, minutes: mins, price: l.price, subject: l.subject, note: l.note });
+      } else g.scheduled++;
+    }
+    const students = [...groups.values()].sort((a, b) => b.amount - a.amount || b.minutes - a.minutes || a.student_name.localeCompare(b.student_name));
+    return {
+      month, students,
+      totals: {
+        lessons: students.reduce((n, g) => n + g.done.length, 0),
+        minutes: students.reduce((n, g) => n + g.minutes, 0),
+        amount: students.reduce((n, g) => n + g.amount, 0),
+        scheduled: students.reduce((n, g) => n + g.scheduled, 0),
+        invoiced_amount: students.filter((g) => g.invoiced).reduce((n, g) => n + g.amount, 0),
+      },
+    };
+  },
+  setInvoiced: (key, month, on) => {
+    if (on) db.prepare("insert or ignore into invoiced (student_key, month) values (?, ?)").run(key, month);
+    else db.prepare("delete from invoiced where student_key = ? and month = ?").run(key, month);
+  },
 };

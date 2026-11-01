@@ -40,6 +40,10 @@ export interface Me {
   today: string;
 }
 
+export interface ReportLesson { id: string; date: string; start_time: string; end_time: string; minutes: number; price: number | null; subject: string | null; note: string | null }
+export interface ReportStudent { key: string; student_id: string | null; student_name: string; color: string; phone: string | null; done: ReportLesson[]; scheduled: number; minutes: number; amount: number; invoiced: boolean }
+export interface Report { month: string; students: ReportStudent[]; totals: { lessons: number; minutes: number; amount: number; scheduled: number; invoiced_amount: number } }
+
 export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) { super(message); this.status = status; }
@@ -80,6 +84,10 @@ export const api = {
     create: (s: Partial<Student>) => req<Student>("POST", "/api/students", s),
     update: (id: string, s: Partial<Student>) => req<Student>("PUT", `/api/students/${id}`, s),
     remove: (id: string) => req<{ ok: true }>("DELETE", `/api/students/${id}`),
+  },
+  report: {
+    month: (month: string) => req<Report>("GET", `/api/report?month=${month}`),
+    setInvoiced: (key: string, month: string, invoiced: boolean) => req<{ ok: true }>("POST", "/api/report/invoiced", { key, month, invoiced }),
   },
   push: {
     subscribe: (subscription: PushSubscriptionJSON) => req<{ ok: true; devices: number }>("POST", "/api/push/subscribe", { subscription }),

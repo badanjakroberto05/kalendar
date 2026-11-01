@@ -3,6 +3,7 @@ import type { Lesson, Student } from "../lib/api";
 import { addMinutes, diffMinutes, todayISO } from "../lib/dates";
 import { colorOf } from "../lib/colors";
 import { Button, Chip, Field, Input, Segmented, Select, Sheet, Textarea, cx } from "./ui";
+import { DateField, TimeField } from "./pickers";
 
 export interface LessonFormValues {
   student_name: string; student_id: string | null; date: string; start_time: string; end_time: string;
@@ -79,15 +80,15 @@ export default function LessonForm({ open, onClose, onSubmit, lesson, students, 
           {v.student_name.trim() && !exact ? <span className="mt-1.5 block text-xs text-brand-deep">Novi učenik – bit će dodan u popis.</span> : null}
         </Field>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-6">
+        <div className="grid grid-cols-2 gap-3">
           <Field label="Datum" className="col-span-2">
-            <Input type="date" value={v.date} onChange={(e) => set("date", e.target.value)} required />
+            <DateField value={v.date} onChange={(d) => set("date", d)} />
           </Field>
-          <Field label="Početak" className="sm:col-span-2">
-            <Input type="time" step={300} value={v.start_time} onChange={(e) => { const st = e.target.value; setV((s) => ({ ...s, start_time: st, end_time: st ? addMinutes(st, dur > 0 ? dur : defaultDuration) : s.end_time })); }} required />
+          <Field label="Početak">
+            <TimeField value={v.start_time} onChange={(st) => setV((s) => ({ ...s, start_time: st, end_time: addMinutes(st, dur > 0 ? dur : defaultDuration) }))} />
           </Field>
-          <Field label="Kraj" className="sm:col-span-2">
-            <Input type="time" step={300} value={v.end_time} onChange={(e) => set("end_time", e.target.value)} required />
+          <Field label="Kraj">
+            <TimeField value={v.end_time} onChange={(et) => set("end_time", et)} />
           </Field>
         </div>
         <div className="-mt-1 flex flex-wrap gap-2">

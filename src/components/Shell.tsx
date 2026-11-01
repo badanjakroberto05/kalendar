@@ -1,12 +1,13 @@
 import type { ReactNode } from "react";
-import { CalendarRange, CalendarDays, Users, Settings as SettingsIcon, Plus } from "lucide-react";
+import { CalendarRange, CalendarDays, Users, Receipt, Settings as SettingsIcon, Plus } from "lucide-react";
 import { cx } from "./ui";
 
-export type View = "week" | "month" | "students" | "settings";
+export type View = "week" | "month" | "students" | "report" | "settings";
 const NAV: { id: View; label: string; icon: typeof CalendarRange }[] = [
   { id: "week", label: "Tjedan", icon: CalendarRange },
   { id: "month", label: "Mjesec", icon: CalendarDays },
   { id: "students", label: "Učenici", icon: Users },
+  { id: "report", label: "Obračun", icon: Receipt },
   { id: "settings", label: "Postavke", icon: SettingsIcon },
 ];
 
@@ -43,10 +44,10 @@ export default function Shell({ view, setView, onAdd, children }: { view: View; 
           <button onClick={onAdd} aria-label="Novi termin" className="pointer-events-auto flex size-14 items-center justify-center rounded-full bg-ink text-white shadow-(--shadow-pop) transition active:scale-95"><Plus className="size-7" /></button>
         </div>
         <nav className="pb-safe border-t border-line bg-white/90 backdrop-blur-xl">
-          <div className="grid grid-cols-4">
+          <div className="grid grid-cols-5">
             {NAV.map((n) => (
-              <button key={n.id} onClick={() => setView(n.id)} className={cx("flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-semibold transition", view === n.id ? "text-brand" : "text-muted")}>
-                <span className={cx("flex h-7 w-12 items-center justify-center rounded-full transition", view === n.id && "bg-brand-soft")}><n.icon className="size-5" /></span>{n.label}
+              <button key={n.id} onClick={() => setView(n.id)} className={cx("flex h-16 flex-col items-center justify-center gap-1 text-[10.5px] font-semibold transition", view === n.id ? "text-brand" : "text-muted")}>
+                <span className={cx("flex h-7 w-11 items-center justify-center rounded-full transition", view === n.id && "bg-brand-soft")}><n.icon className="size-5" /></span>{n.label}
               </button>
             ))}
           </div>

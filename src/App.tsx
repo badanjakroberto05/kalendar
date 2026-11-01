@@ -8,6 +8,7 @@ import WeekView from "./components/WeekView";
 import MonthView from "./components/MonthView";
 import StudentsView from "./components/StudentsView";
 import SettingsView from "./components/SettingsView";
+import ReportView from "./components/ReportView";
 import LessonForm, { type LessonFormValues } from "./components/LessonForm";
 import LessonDetail from "./components/LessonDetail";
 
@@ -80,6 +81,7 @@ function Main({ me, refreshMe, onLogout }: { me: Me; refreshMe: () => Promise<vo
       {view === "students" ? <StudentsView students={students} busy={busy}
         onSave={async (s, id) => { await run(() => (id ? api.students.update(id, s) : api.students.create(s)), "Spremljeno."); }}
         onDelete={async (id) => { await run(() => api.students.remove(id), "Učenik je obrisan."); }} /> : null}
+      {view === "report" ? <ReportView anchor={anchor} setAnchor={setAnchor} tick={tick} /> : null}
       {view === "settings" ? <SettingsView me={me} refreshMe={refreshMe} onLogout={onLogout} /> : null}
 
       <LessonForm open={sheet?.kind === "create" || sheet?.kind === "edit"} onClose={() => setSheet(null)} onSubmit={submitLesson} busy={busy}

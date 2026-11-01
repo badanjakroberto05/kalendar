@@ -11,6 +11,7 @@ Privatna web aplikacija (PWA) za vođenje termina instrukcija. Sve radi na **tvo
   - **email** preko tvog SMTP-a (npr. Gmail app lozinka) – opcionalno.
 - **Podsjetnik prije termina** (push, npr. 60 min prije).
 - **Ponavljanje svaki tjedan**, status *održano / otkazano*, cijena i mjesečni zbroj.
+- **Obračun po učeniku**: za odabrani mjesec popis održanih termina (datum, vrijeme), ukupno sati i iznos za fakturu, oznaka „fakturirano” i kopiranje popisa.
 - Baza je **SQLite datoteka** u `/data` – backup = kopiraj jednu datoteku.
 
 ## Tehnologija

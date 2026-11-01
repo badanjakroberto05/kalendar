@@ -42,6 +42,10 @@ export function relativeDay(iso: string) {
   if (diff === -1) return "Jučer";
   return null;
 }
+export function hours(minutes: number) {
+  const h = minutes / 60;
+  return `${h.toLocaleString("hr-HR", { maximumFractionDigits: 2 })} h`;
+}
 export const money = (n: number) => `${n.toLocaleString("hr-HR", { maximumFractionDigits: 2 })} €`;
 export function plural(n: number, one: string, few: string, many: string) {
   const m10 = n % 10, m100 = n % 100;

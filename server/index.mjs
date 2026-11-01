@@ -2,7 +2,7 @@ import express from "express";
 import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
-import { students, lessons, pushSubs, getSettings, saveSettings, uuid } from "./db.mjs";
+import { students, lessons, pushSubs, report, getSettings, saveSettings, uuid } from "./db.mjs";
 import {
   ensurePassword, checkPassword, setPassword, issueSession, verifySession,
   parseCookies, cookieHeader, COOKIE_NAME, loginAllowed, loginFailed, loginSucceeded,
@@ -176,6 +176,19 @@ api.delete("/lessons/:id", (req, res) => {
   if (!cur) return res.json({ ok: true });
   if (req.query.scope === "future" && cur.series_id) lessons.removeFutureInSeries(cur.series_id, cur.date);
   else lessons.remove(cur.id);
+  res.json({ ok: true });
+});
+
+// ---------- obračun ----------
+api.get("/report", (req, res) => {
+  const m = String(req.query.month || "");
+  if (!/^\d{4}-\d{2}$/.test(m)) return res.status(400).json({ error: "month obavezan (YYYY-MM)." });
+  res.json(report.month(m));
+});
+api.post("/report/invoiced", (req, res) => {
+  const { key, month, invoiced } = req.body || {};
+  if (!key || !/^\d{4}-\d{2}$/.test(month || "")) return res.status(400).json({ error: "Neispravan zahtjev." });
+  report.setInvoiced(key, month, Boolean(invoiced));
   res.json({ ok: true });
 });
 
