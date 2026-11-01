@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+
+@theme {
+  --font-sans: "Geist Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+  --color-canvas: #f5f6fa;
+  --color-ink: #0b0e1a;
+  --color-ink-soft: #374151;
+  --color-muted: #6b7280;
+  --color-line: #e8eaf1;
+  --color-brand: #5b5fef;
+  --color-brand-soft: #eef0ff;
+  --color-brand-deep: #4448d8;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --shadow-card: 0 1px 2px rgba(11, 14, 26, 0.04), 0 8px 24px rgba(11, 14, 26, 0.06);
+  --shadow-pop: 0 2px 6px rgba(11, 14, 26, 0.08), 0 20px 50px rgba(11, 14, 26, 0.16);
+}
+
+@layer base {
+:root { color-scheme: light; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+#root { min-height: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+input[type="date"], input[type="time"] { -webkit-appearance: none; appearance: none; min-height: 48px; }
+input[type="date"]::-webkit-date-and-time-value, input[type="time"]::-webkit-date-and-time-value { text-align: left; }
+}
+.pt-safe { padding-top: env(safe-area-inset-top); }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.tabular { font-variant-numeric: tabular-nums; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+@keyframes sheet-up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop { from { transform: scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
+.anim-sheet { animation: sheet-up .28s cubic-bezier(.19,1,.22,1); }
+.anim-fade { animation: fade-in .2s ease-out; }
+.anim-pop { animation: pop .22s cubic-bezier(.19,1,.22,1); }
+@media (prefers-reduced-motion: reduce) { .anim-sheet, .anim-fade, .anim-pop { animation: none; } }
