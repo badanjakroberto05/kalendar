@@ -33,7 +33,8 @@ body {
 }
 #root { min-height: 100%; }
 button, input, select, textarea { font: inherit; color: inherit; }
-button { cursor: pointer; }
+button { cursor: pointer; touch-action: manipulation; }
+.overflow-y-auto { -webkit-overflow-scrolling: touch; }
 input[type="date"], input[type="time"] { -webkit-appearance: none; appearance: none; min-height: 48px; }
 input[type="date"]::-webkit-date-and-time-value, input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 }

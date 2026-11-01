@@ -81,8 +81,8 @@ export function Chip({ active, children, onClick, className }: { active?: boolea
 export function Toggle({ checked, onChange, disabled }: { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean }) {
   return (
     <button type="button" role="switch" aria-checked={checked} disabled={disabled} onClick={() => onChange(!checked)}
-      className={cx("relative h-8 w-[52px] shrink-0 rounded-full transition disabled:opacity-40", checked ? "bg-emerald-500" : "bg-slate-300")}>
-      <span className={cx("absolute top-1 size-6 rounded-full bg-white shadow transition-all", checked ? "left-[22px]" : "left-1")} />
+      className={cx("relative h-8 w-[52px] shrink-0 rounded-full transition-colors duration-200 disabled:opacity-40", checked ? "bg-emerald-500" : "bg-slate-300")}>
+      <span className={cx("absolute left-1 top-1 size-6 rounded-full bg-white shadow transition-transform duration-200", checked ? "translate-x-5" : "translate-x-0")} />
     </button>
   );
 }
@@ -116,7 +116,7 @@ export function Sheet({ open, onClose, title, children, footer, wide }: { open: 
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6" role="dialog" aria-modal="true">
-      <div className="anim-fade absolute inset-0 bg-ink/40 backdrop-blur-[2px]" onClick={onClose} />
+      <div className="anim-fade absolute inset-0 bg-ink/40" onClick={onClose} />
       <div className={cx("anim-sheet relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-[28px] bg-white shadow-(--shadow-pop) sm:rounded-[28px]", wide ? "sm:max-w-2xl" : "sm:max-w-lg")}>
         <div className="mx-auto mt-2.5 h-1.5 w-10 rounded-full bg-slate-200 sm:hidden" />
         <div className="flex items-center justify-between px-5 pt-3 pb-2 sm:px-7 sm:pt-6">

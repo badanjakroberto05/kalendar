@@ -14,7 +14,7 @@ export default function Shell({ view, setView, onAdd, children }: { view: View; 
   return (
     <div className="min-h-dvh lg:flex">
       {/* Desktop sidebar */}
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-line bg-white/70 px-4 py-6 backdrop-blur lg:flex lg:sticky lg:top-0 lg:h-dvh">
+      <aside className="hidden w-60 shrink-0 flex-col border-r border-line bg-white px-4 py-6 lg:flex lg:sticky lg:top-0 lg:h-dvh">
         <div className="mb-8 flex items-center gap-3 px-2">
           <span className="flex size-10 items-center justify-center rounded-2xl bg-brand text-white shadow-[0_6px_16px_rgba(91,95,239,.3)]"><CalendarDays className="size-5" /></span>
           <div><div className="font-bold leading-tight">Kalendar</div><div className="text-xs text-muted">instrukcije</div></div>
@@ -42,7 +42,7 @@ export default function Shell({ view, setView, onAdd, children }: { view: View; 
         <div className="pointer-events-none flex justify-end px-5 pb-3">
           <button onClick={onAdd} aria-label="Novi termin" className="pointer-events-auto flex size-14 items-center justify-center rounded-full bg-ink text-white shadow-(--shadow-pop) transition active:scale-95"><Plus className="size-7" /></button>
         </div>
-        <nav className="pb-safe border-t border-line bg-white/90 backdrop-blur-xl">
+        <nav className="pb-safe border-t border-line bg-white">
           <div className="grid grid-cols-4">
             {NAV.map((n) => (
               <button key={n.id} onClick={() => setView(n.id)} className={cx("flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-semibold transition", view === n.id ? "text-brand" : "text-muted")}>
