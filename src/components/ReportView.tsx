@@ -69,7 +69,7 @@ export default function ReportView({ anchor, setAnchor, tick }: { anchor: Date; 
                 <span className={cx("flex size-11 shrink-0 items-center justify-center rounded-2xl text-base font-bold", c.soft, c.fg)}>{initials(s.student_name)}</span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2"><span className="truncate font-semibold">{s.student_name}</span>{s.invoiced ? <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">Fakturirano</span> : null}</span>
-                  <span className="block text-sm text-muted">{s.done.length ? `${terminaLabel(s.done.length)} · ${hours(s.minutes)}` : "Još ništa održano"}{s.scheduled ? ` · ${s.scheduled} zakazano` : ""}</span>
+                  <span className="block text-sm text-muted">{s.done.length ? `${terminaLabel(s.done.length)} · ${hours(s.minutes)}` : "Još ništa održano"}{s.scheduled ? ` · ${s.scheduled} zakazano` : ""}{s.unpriced ? <span className="font-semibold text-amber-700"> · {s.unpriced} bez cijene</span> : null}</span>
                 </span>
                 <span className="text-right">
                   <span className="tabular block text-lg font-bold">{money(s.amount)}</span>
@@ -90,6 +90,7 @@ export default function ReportView({ anchor, setAnchor, tick }: { anchor: Date; 
                       ))}
                     </ul>
                   ) : <p className="text-sm text-muted">Nema održanih termina ovaj mjesec.</p>}
+                  {s.unpriced ? <p className="mt-2 text-xs font-semibold text-amber-700">{s.unpriced === 1 ? "1 termin nema cijenu" : `${s.unpriced} termina nemaju cijenu`} i ne ulazi u iznos – upiši cijenu učeniku (Učenici) ili na samom terminu.</p> : null}
                   {s.scheduled ? <p className="mt-2 flex items-center gap-1.5 text-xs text-muted"><CalendarClock className="size-3.5" />Još {s.scheduled} zakazano ovaj mjesec – ulazi u obračun kad ga označiš kao održano.</p> : null}
                   <div className="mt-3 flex items-center justify-between gap-3">
                     <label className="flex items-center gap-3 text-sm font-semibold"><Toggle checked={s.invoiced} onChange={(v) => toggleInvoiced(s, v)} />Fakturirano</label>
