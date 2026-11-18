@@ -124,10 +124,17 @@ export const students = {
 };
 
 // ---- termini ----
+// Termin bez vlastite cijene nasljeđuje trenutnu cijenu učenika (inače bi se u obračunu brojao kao 0 €).
+const LESSON_SQL = "select l.*, s.price as student_price from lessons l left join students s on s.id = l.student_id";
+const withPrice = (l) => {
+  if (!l) return l;
+  const { student_price, ...rest } = l;
+  return { ...rest, price: rest.price ?? student_price ?? null };
+};
 export const lessons = {
   range: (from, to) =>
-    db.prepare("select * from lessons where date >= ? and date <= ? order by date, start_time").all(from, to),
-  get: (id) => db.prepare("select * from lessons where id = ?").get(id),
+    db.prepare(LESSON_SQL + " where l.date >= ? and l.date <= ? order by l.date, l.start_time").all(from, to).map(withPrice),
+  get: (id) => withPrice(db.prepare(LESSON_SQL + " where l.id = ?").get(id)),
   insertMany: (rows) => {
     const stmt = db.prepare(
       "insert into lessons (id, student_id, student_name, date, start_time, end_time, subject, note, price, status, series_id) values (?,?,?,?,?,?,?,?,?,?,?)"
@@ -142,7 +149,8 @@ export const lessons = {
     return rows.map((r) => lessons.get(r.id));
   },
   update: (id, patch) => {
-    const cur = lessons.get(id);
+    // sirovi red: naslijeđena cijena se ne smije zapisati u termin pri običnoj izmjeni
+    const cur = db.prepare("select * from lessons where id = ?").get(id);
     if (!cur) return null;
     const n = { ...cur, ...patch };
     db.prepare(
@@ -173,19 +181,21 @@ export const pushSubs = {
 export const report = {
   month: (month) => {
     const rows = db.prepare(
-      "select l.*, s.color, s.phone from lessons l left join students s on s.id = l.student_id where substr(l.date,1,7) = ? and l.status != 'cancelled' order by l.date, l.start_time"
+      "select l.*, s.color, s.phone, s.price as student_price from lessons l left join students s on s.id = l.student_id where substr(l.date,1,7) = ? and l.status != 'cancelled' order by l.date, l.start_time"
     ).all(month);
     const invoiced = new Set(db.prepare("select student_key from invoiced where month = ?").all(month).map((r) => r.student_key));
     const groups = new Map();
     for (const l of rows) {
       const key = l.student_id || "name:" + l.student_name.toLowerCase();
-      if (!groups.has(key)) groups.set(key, { key, student_id: l.student_id, student_name: l.student_name, color: l.color || "indigo", phone: l.phone, done: [], scheduled: 0, minutes: 0, amount: 0, invoiced: invoiced.has(key) });
+      if (!groups.has(key)) groups.set(key, { key, student_id: l.student_id, student_name: l.student_name, color: l.color || "indigo", phone: l.phone, done: [], scheduled: 0, minutes: 0, amount: 0, unpriced: 0, invoiced: invoiced.has(key) });
       const g = groups.get(key);
+      const price = l.price ?? l.student_price ?? null;
       if (l.status === "done") {
         const [sh, sm] = l.start_time.split(":").map(Number), [eh, em] = l.end_time.split(":").map(Number);
         const mins = eh * 60 + em - (sh * 60 + sm);
-        g.minutes += mins; g.amount += Number(l.price) || 0;
-        g.done.push({ id: l.id, date: l.date, start_time: l.start_time, end_time: l.end_time, minutes: mins, price: l.price, subject: l.subject, note: l.note });
+        g.minutes += mins; g.amount += Number(price) || 0;
+        if (price == null) g.unpriced++;
+        g.done.push({ id: l.id, date: l.date, start_time: l.start_time, end_time: l.end_time, minutes: mins, price, subject: l.subject, note: l.note });
       } else g.scheduled++;
     }
     const students = [...groups.values()].sort((a, b) => b.amount - a.amount || b.minutes - a.minutes || a.student_name.localeCompare(b.student_name));

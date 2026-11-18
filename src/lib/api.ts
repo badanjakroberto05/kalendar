@@ -41,7 +41,7 @@ export interface Me {
 }
 
 export interface ReportLesson { id: string; date: string; start_time: string; end_time: string; minutes: number; price: number | null; subject: string | null; note: string | null }
-export interface ReportStudent { key: string; student_id: string | null; student_name: string; color: string; phone: string | null; done: ReportLesson[]; scheduled: number; minutes: number; amount: number; invoiced: boolean }
+export interface ReportStudent { key: string; student_id: string | null; student_name: string; color: string; phone: string | null; done: ReportLesson[]; scheduled: number; minutes: number; amount: number; unpriced: number; invoiced: boolean }
 export interface Report { month: string; students: ReportStudent[]; totals: { lessons: number; minutes: number; amount: number; scheduled: number; invoiced_amount: number } }
 
 export class ApiError extends Error {
